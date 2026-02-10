@@ -8,7 +8,7 @@ A comprehensive mobile test automation framework built with **CodeceptJS** and *
 
 ## Table of Contents
 
-1. [Test Strategy](#test-strategy)
+1. [Test Strategy](#test-strategy)F
 2. [Project Structure](#project-structure)
 3. [Quick Start](#quick-start)
 4. [Running Tests](#running-tests)
@@ -166,7 +166,7 @@ MobileApp/
 
 ```bash
 # 1. Clone and install dependencies
-git clone <repository-url>
+git clone https://github.com/snjsinghqa/MOBILEAPP.git
 cd MobileApp
 npm install
 

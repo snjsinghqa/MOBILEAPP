@@ -8,7 +8,7 @@ A comprehensive mobile test automation framework built with **CodeceptJS** and *
 
 ## Table of Contents
 
-1. [Test Strategy](#test-strategy)F
+1. [Test Strategy](#test-strategy)
 2. [Project Structure](#project-structure)
 3. [Quick Start](#quick-start)
 4. [Running Tests](#running-tests)

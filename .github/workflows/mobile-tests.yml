@@ -1,0 +1,305 @@
+name: Mobile Test Automation
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Type of tests to run'
+        required: true
+        default: 'smoke'
+        type: choice
+        options:
+          - smoke
+          - regression
+          - all
+
+env:
+  NODE_VERSION: '20'
+  JAVA_VERSION: '17'
+
+jobs:
+  # Lint and build check
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+  # Android smoke tests
+  android-smoke-tests:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Appium
+        run: |
+          npm install -g appium
+          appium driver install uiautomator2
+
+      - name: Download Sauce Labs Demo App
+        run: |
+          mkdir -p apps/android
+          curl -L -o apps/android/mda-2.0.1-22.apk \
+            "https://github.com/saucelabs/my-demo-app-android/releases/download/v2.0.1/mda-2.0.1-22.apk"
+
+      - name: Run Android smoke tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          profile: 'Pixel 6'
+          script: |
+            appium --base-path /wd/hub &
+            sleep 10
+            npm run test:android:emulator -- --grep @smoke
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-smoke-results
+          path: |
+            output/allure-results/
+            output/reports/
+            output/step-screenshots/
+          retention-days: 7
+
+  # Android full regression tests (nightly or manual)
+  android-regression-tests:
+    runs-on: ubuntu-latest
+    needs: lint
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.test_type == 'regression'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Appium
+        run: |
+          npm install -g appium
+          appium driver install uiautomator2
+
+      - name: Download Sauce Labs Demo App
+        run: |
+          mkdir -p apps/android
+          curl -L -o apps/android/mda-2.0.1-22.apk \
+            "https://github.com/saucelabs/my-demo-app-android/releases/download/v2.0.1/mda-2.0.1-22.apk"
+
+      - name: Run Android regression tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          profile: 'Pixel 6'
+          script: |
+            appium --base-path /wd/hub &
+            sleep 10
+            npm run test:android:emulator -- --grep @regression
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-regression-results
+          path: |
+            output/allure-results/
+            output/reports/
+            output/step-screenshots/
+          retention-days: 14
+
+  # iOS smoke tests (macOS runner)
+  ios-smoke-tests:
+    runs-on: macos-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Appium and XCUITest driver
+        run: |
+          npm install -g appium
+          appium driver install xcuitest
+
+      - name: Download Sauce Labs Demo App (iOS)
+        run: |
+          mkdir -p apps/ios
+          # Note: iOS app needs to be downloaded from Sauce Labs iOS repo releases
+          # or built from source. This is a placeholder URL.
+          echo "iOS app would be downloaded here from Sauce Labs releases"
+
+      - name: List available simulators
+        run: xcrun simctl list devices
+
+      - name: Boot iOS Simulator
+        run: |
+          # Boot an iPhone 15 Pro simulator
+          DEVICE_UDID=$(xcrun simctl list devices | grep "iPhone 15 Pro" | grep -v unavailable | head -1 | awk -F '[()]' '{print $2}')
+          if [ -n "$DEVICE_UDID" ]; then
+            xcrun simctl boot "$DEVICE_UDID" || true
+          fi
+
+      - name: Run iOS smoke tests
+        if: false  # Disabled until iOS app is available
+        env:
+          PLATFORM: ios
+          DEVICE_TYPE: simulator
+        run: |
+          appium --base-path /wd/hub &
+          sleep 10
+          npm run test:ios:simulator -- --grep @smoke
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-smoke-results
+          path: |
+            output/allure-results/
+            output/reports/
+            output/step-screenshots/
+          retention-days: 7
+
+  # Generate and publish Allure report
+  publish-report:
+    runs-on: ubuntu-latest
+    needs: [android-smoke-tests]
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Android results
+        uses: actions/download-artifact@v4
+        with:
+          name: android-smoke-results
+          path: output/android
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Allure
+        run: npm install -g allure-commandline
+
+      - name: Generate Allure Report
+        run: |
+          allure generate output/android/allure-results -o allure-report --clean
+
+      - name: Deploy report to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
+
+  # Nightly full test suite
+  nightly-tests:
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 2 * * *'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Appium
+        run: |
+          npm install -g appium
+          appium driver install uiautomator2
+
+      - name: Download Sauce Labs Demo App
+        run: |
+          mkdir -p apps/android
+          curl -L -o apps/android/mda-2.0.1-22.apk \
+            "https://github.com/saucelabs/my-demo-app-android/releases/download/v2.0.1/mda-2.0.1-22.apk"
+
+      - name: Run full test suite
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          profile: 'Pixel 6'
+          script: |
+            appium --base-path /wd/hub &
+            sleep 10
+            npm run test:android:emulator
+
+      - name: Upload nightly results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-test-results
+          path: |
+            output/allure-results/
+            output/reports/
+          retention-days: 30

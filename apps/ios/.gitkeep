@@ -1,0 +1,5 @@
+# Place your iOS app files here
+# - App.app for simulator testing
+# - App.ipa for real device testing
+
+# Update the paths in .env file accordingly

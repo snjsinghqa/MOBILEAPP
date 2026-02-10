@@ -80,6 +80,12 @@ class ProductDetailsPage extends BasePage {
       android: '~View menu',
       ios: '~Navigate back',
     },
+
+    // Go shopping button
+    goShoppingButton: {
+      android: 'android=new UiSelector().resourceId("com.saucelabs.mydemoapp.android:id/shoppingBt")',
+      ios: '~Go Shopping',
+    },
     
     // Cart icon
     cartIcon: {
@@ -279,6 +285,21 @@ class ProductDetailsPage extends BasePage {
     );
     await this.tap(backButton);
   }
+
+
+  /**
+   * Click on "Go Shopping" to return to products page
+   */
+  async goShopping() {
+    const goShoppingButton = this.getLocator(
+      this.locators.goShoppingButton.android,
+      this.locators.goShoppingButton.ios
+    );
+    await this.tap(goShoppingButton);
+  }
+
+
+
 
   /**
    * Navigate to cart

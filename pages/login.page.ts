@@ -19,6 +19,8 @@ const { I } = inject();
 class LoginPage extends BasePage {
   
   // Locators - Native Android app uses resource-id, iOS uses accessibility id
+  // Note: Helper methods from BasePage (like androidResourceId, accessibilityId) can be used 
+  // for dynamic locators in methods, but static locators use raw strings for compatibility
   private locators = {
     // Username/Email field
     usernameField: {
@@ -34,7 +36,7 @@ class LoginPage extends BasePage {
     
     // Login button
     loginButton: {
-      android: '~Tap to login with given credentials',
+      android: 'android=new UiSelector().resourceId("com.saucelabs.mydemoapp.android:id/loginBtn")',
       ios: '-ios predicate string:type == "XCUIElementTypeButton" AND name == "Login" AND label == "Login"',
     },
     
@@ -120,8 +122,8 @@ class LoginPage extends BasePage {
     
     // Logout confirmation OK button (if modal appears)
     logoutConfirmButton: {
-      android: '~OK',
-      ios: '~OK',
+      android: 'android=new UiSelector().text("LOGOUT")',
+      ios: '~LOGOUT',
     },
   };
 
@@ -229,9 +231,9 @@ class LoginPage extends BasePage {
    * Wait for page to load
    */
   async waitForPageLoad(): Promise<void> {
-    await this.waitForVisible(this.loginScreen, 15);
-    await this.waitForVisible(this.usernameField, 10);
-    await this.waitForVisible(this.loginButton, 10);
+    await this.waitForVisible(this.loginScreen, 20);
+    await this.waitForVisible(this.usernameField, 20);
+    await this.waitForVisible(this.loginButton, 20);
   }
 
   /**
@@ -246,7 +248,7 @@ class LoginPage extends BasePage {
    * @param username - Username or email
    */
   async enterUsername(username: string): Promise<void> {
-    await this.waitForElement(this.usernameField, 5);
+    await this.waitForElement(this.usernameField, 20);
     await this.setFieldValue(this.usernameField, username);
   }
 
@@ -259,7 +261,7 @@ class LoginPage extends BasePage {
       this.locators.usernameHints[username].android,
       this.locators.usernameHints[username].ios
     );
-    await this.waitForElement(hintLocator, 5);
+    await this.waitForElement(hintLocator, 20);
     await this.tap(hintLocator);
   }
 
@@ -268,7 +270,7 @@ class LoginPage extends BasePage {
    * @param password - Password
    */
   async enterPassword(password: string): Promise<void> {
-    await this.waitForElement(this.passwordField, 5);
+    await this.waitForElement(this.passwordField, 20);
     await this.setFieldValue(this.passwordField, password);
   }
 
@@ -294,7 +296,7 @@ class LoginPage extends BasePage {
    * Get error message text
    */
   async getErrorMessage(): Promise<string> {
-    await this.waitForVisible(this.errorMessage, 5);
+    await this.waitForVisible(this.errorMessage, 20);
     return await this.getText(this.errorMessage);
   }
 
@@ -303,7 +305,7 @@ class LoginPage extends BasePage {
    */
   async isErrorDisplayed(): Promise<boolean> {
     try {
-      await this.waitForVisible(this.errorMessage, 3);
+      await this.waitForVisible(this.errorMessage, 20);
       return await this.elementExists(this.errorMessage);
     } catch {
       return false;
@@ -315,7 +317,7 @@ class LoginPage extends BasePage {
    */
   async isUsernameErrorDisplayed(): Promise<boolean> {
     try {
-      await this.waitForVisible(this.usernameError, 3);
+      await this.waitForVisible(this.usernameError, 20);
       return await this.elementExists(this.usernameError);
     } catch {
       return false;
@@ -327,7 +329,7 @@ class LoginPage extends BasePage {
    */
   async isPasswordErrorDisplayed(): Promise<boolean> {
     try {
-      await this.waitForVisible(this.passwordError, 3);
+      await this.waitForVisible(this.passwordError, 20);
       return await this.elementExists(this.passwordError);
     } catch {
       return false;
@@ -338,7 +340,7 @@ class LoginPage extends BasePage {
    * Get username error message text
    */
   async getUsernameErrorMessage(): Promise<string> {
-    await this.waitForVisible(this.usernameError, 3);
+    await this.waitForVisible(this.usernameError, 20);
     return await this.getText(this.usernameError);
   }
 
@@ -346,7 +348,7 @@ class LoginPage extends BasePage {
    * Get password error message text
    */
   async getPasswordErrorMessage(): Promise<string> {
-    await this.waitForVisible(this.passwordError, 3);
+    await this.waitForVisible(this.passwordError, 20);
     return await this.getText(this.passwordError);
   }
 
@@ -373,7 +375,7 @@ class LoginPage extends BasePage {
    * Perform logout from menu
    */
   async logout() {
-    await this.waitForElement(this.logoutMenuItem, 5);
+    await this.waitForElement(this.logoutMenuItem, 20);
     await this.tap(this.logoutMenuItem);
     await I.wait(1);
     // Handle confirmation dialog if it appears

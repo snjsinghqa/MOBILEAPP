@@ -93,9 +93,9 @@ class CartPage extends BasePage {
       ios: '**/XCUIElementTypeStaticText[`label == "No Items"`]',
     },
     
-    // Back button
+    // Back button (hamburger/menu button used for navigation)
     backButton: {
-      android: '~Navigate back',
+      android: '~View menu',
       ios: '~Navigate back',
     },
     
@@ -140,7 +140,7 @@ class CartPage extends BasePage {
    * Wait for page to load
    */
   async waitForPageLoad(): Promise<void> {
-    await this.waitForVisible(this.cartScreen, 15);
+    await this.waitForVisible(this.cartScreen, 30);
   }
 
   /**

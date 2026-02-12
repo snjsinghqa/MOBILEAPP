@@ -1,3 +1,5 @@
+const { I } = inject();
+
 /**
  * Base Page Object class that all pages should extend
  * Contains common methods and properties for mobile page objects
@@ -22,6 +24,101 @@ export abstract class BasePage {
    */
   protected getLocator(androidLocator: string, iosLocator: string): string {
     return this.isAndroid ? androidLocator : iosLocator;
+  }
+
+  /**
+   * Create accessibility ID locator (works on both platforms)
+   * @param id - Accessibility identifier
+   * @returns Accessibility ID locator string
+   * @example accessibilityId("Login button") returns "~Login button"
+   */
+  protected accessibilityId(id: string): string {
+    return `~${id}`;
+  }
+
+  /**
+   * Create Android resource ID locator
+   * @param packageName - App package name
+   * @param id - Resource ID
+   * @returns Android resource ID locator string
+   * @example androidResourceId("com.example.app", "loginBtn") 
+   *          returns 'android=new UiSelector().resourceId("com.example.app:id/loginBtn")'
+   */
+  protected androidResourceId(packageName: string, id: string): string {
+    return `android=new UiSelector().resourceId("${packageName}:id/${id}")`;
+  }
+
+  /**
+   * Create Android UiSelector with description contains
+   * @param text - Description text to match
+   * @returns Android description locator string
+   * @example androidDescriptionContains("cart") 
+   *          returns 'android=new UiSelector().descriptionContains("cart")'
+   */
+  protected androidDescriptionContains(text: string): string {
+    return `android=new UiSelector().descriptionContains("${text}")`;
+  }
+
+  /**
+   * Create Android UiSelector with text contains
+   * @param text - Text to match
+   * @returns Android text locator string
+   * @example androidTextContains("Login") 
+   *          returns 'android=new UiSelector().textContains("Login")'
+   */
+  protected androidTextContains(text: string): string {
+    return `android=new UiSelector().textContains("${text}")`;
+  }
+
+  /**
+   * Create Android UiSelector with text
+   * @param text - Exact text to match
+   * @returns Android text locator string
+   * @example androidText("Login") 
+   *          returns 'android=new UiSelector().text("Login")'
+   */
+  protected androidText(text: string): string {
+    return `android=new UiSelector().text("${text}")`;
+  }
+
+  /**
+   * Create custom Android UiSelector locator
+   * @param selector - UiSelector expression (without "new UiSelector().")
+   * @returns Android UiSelector locator string
+   * @example androidUiSelector('className("android.widget.Button").index(2)') 
+   *          returns 'android=new UiSelector().className("android.widget.Button").index(2)'
+   */
+  protected androidUiSelector(selector: string): string {
+    return `android=new UiSelector().${selector}`;
+  }
+
+  /**
+   * Create iOS predicate string locator
+   * @param predicate - iOS predicate expression
+   * @returns iOS predicate locator string
+   * @example iosPredicateString('label == "Login"') 
+   *          returns '-ios predicate string:label == "Login"'
+   */
+  protected iosPredicateString(predicate: string): string {
+    return `-ios predicate string:${predicate}`;
+  }
+
+  /**
+   * Create iOS class chain locator
+   * @param chain - iOS class chain expression
+   * @returns iOS class chain locator string
+   */
+  protected iosClassChain(chain: string): string {
+    return `-ios class chain:**/${chain}`;
+  }
+
+  /**
+   * Create XPath locator
+   * @param path - XPath expression
+   * @returns XPath locator string
+   */
+  protected xpath(path: string): string {
+    return path.startsWith('//') ? path : `//${path}`;
   }
 
   /**

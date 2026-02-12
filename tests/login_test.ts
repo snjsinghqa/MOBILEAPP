@@ -264,8 +264,8 @@ Scenario('Successful logout after login @smoke @login @logout @regression', asyn
   
   // Handle any logout confirmation dialog
   try {
-    const okButton = await I.grabNumberOfVisibleElements(LoginPage.logoutConfirmButton);
-    if (okButton > 0) {
+    const logoutButton = await I.grabNumberOfVisibleElements(LoginPage.logoutConfirmButton);
+    if (logoutButton > 0) {
       await I.tap(LoginPage.logoutConfirmButton);
       await I.wait(1);
     }
@@ -277,21 +277,14 @@ Scenario('Successful logout after login @smoke @login @logout @regression', asyn
   await I.wait(3);
   await I.saveScreenshot('logout_result.png');
   
-  // Verify products page is displayed
-  await ProductsPage.waitForPageLoad();
-  
-  // Open menu to verify login option is back
-  await ProductsPage.openMenu();
-  await I.wait(1);
-  
-  // Check if Login Menu Item is visible (means we logged out)
-  const loginVisible = await I.grabNumberOfVisibleElements(LoginPage.loginMenuItem);
-  I.assertTrue(loginVisible > 0, 'Login menu item should be visible after logout (user logged out)');
-  
+  // Verify all elements are visible
+  const isPageDisplayed = await LoginPage.isPageDisplayed();
+  I.assertTrue(isPageDisplayed, 'Login page should be displayed');
+
   await I.saveScreenshot('logout_successful.png');
 });
 
-Scenario.skip('Verify user session cleared after logout', async ({ I }) => {
+Scenario('Verify user session cleared after logout', async ({ I }) => {
   // Login first
   await ProductsPage.waitForPageLoad();
   await ProductsPage.openMenu();
@@ -325,11 +318,14 @@ Scenario.skip('Verify user session cleared after logout', async ({ I }) => {
   
   // Handle any confirmation
   try {
-    const okButton = await I.grabNumberOfVisibleElements('~OK');
-    if (okButton > 0) {
-      await I.tap('~OK');
+    const logoutButton = await I.grabNumberOfVisibleElements(LoginPage.logoutConfirmButton);
+    if (logoutButton > 0) {
+      await I.tap(LoginPage.logoutConfirmButton);
+      await I.wait(1);
     }
-  } catch {}
+  } catch {
+    // No dialog
+  }
   
   await I.wait(2);
   

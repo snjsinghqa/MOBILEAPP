@@ -85,11 +85,10 @@ jobs:
           profile: pixel_6
           target: google_apis
           force-avd-creation: false
-          emulator-boot-timeout: 600
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory 4096 -partition-size 2048
+          emulator-boot-timeout: 900
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory 4096 -partition-size 2048 -wipe-data
           disable-animations: true
           disable-spellchecker: true
-          disable-linux-hw-accel: auto
           script: |
             echo "=== Emulator Boot Complete ==="
             
@@ -217,11 +216,10 @@ jobs:
           profile: pixel_6
           target: google_apis
           force-avd-creation: false
-          emulator-boot-timeout: 600
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory 4096 -partition-size 2048
+          emulator-boot-timeout: 900
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory 4096 -partition-size 2048 -wipe-data
           disable-animations: true
           disable-spellchecker: true
-          disable-linux-hw-accel: auto
           script: |
             echo "=== Emulator Boot Complete ==="
             
@@ -441,11 +439,10 @@ jobs:
           profile: pixel_6
           target: google_apis
           force-avd-creation: false
-          emulator-boot-timeout: 600
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory 4096 -partition-size 2048
+          emulator-boot-timeout: 900
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory 4096 -partition-size 2048 -wipe-data
           disable-animations: true
           disable-spellchecker: true
-          disable-linux-hw-accel: auto
           script: |
             echo "=== Emulator Boot Complete ==="
             

@@ -83,13 +83,52 @@ jobs:
           api-level: 33
           arch: x86_64
           profile: 'Pixel 6'
+          target: google_apis
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
           script: |
-            # Start Appium server with relaxed security for network tests
-            appium --base-path /wd/hub --port 4723 --relaxed-security &
-            # Wait for Appium to be ready
-            timeout 30 bash -c 'until curl -s http://localhost:4723/wd/hub/status > /dev/null; do sleep 1; done' || echo "Appium may not be fully ready"
-            # Run tests with framework's auto-device management disabled (Appium already started)
-            AUTO_APPIUM=false PLATFORM=android DEVICE_TYPE=emulator npx codeceptjs run 'tests/*_test.ts' --grep @smoke
+            echo "=== Emulator Boot Complete ==="
+            adb devices
+            echo ""
+            
+            echo "=== Waiting for Emulator to be Fully Ready ==="
+            adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done; input keyevent 82'
+            sleep 5
+            echo "Emulator is fully booted and ready"
+            echo ""
+            
+            echo "=== Verifying App Installation ==="
+            ls -la apps/android/mda-2.0.1-22.apk
+            echo ""
+            
+            echo "=== Starting Appium Server ==="
+            appium --base-path /wd/hub --port 4723 --relaxed-security > appium.log 2>&1 &
+            APPIUM_PID=$!
+            echo "Appium PID: $APPIUM_PID"
+            echo ""
+            
+            echo "=== Waiting for Appium to be Ready ==="
+            for i in {1..30}; do
+              if curl -s http://localhost:4723/wd/hub/status > /dev/null 2>&1; then
+                echo "Appium is ready!"
+                break
+              fi
+              echo "Waiting for Appium... attempt $i/30"
+              sleep 2
+            done
+            echo ""
+            
+            echo "=== Appium Status Check ==="
+            curl -s http://localhost:4723/wd/hub/status | jq '.' || echo "Failed to get Appium status"
+            echo ""
+            
+            echo "=== Running Smoke Tests ==="
+            AUTO_APPIUM=false PLATFORM=android DEVICE_TYPE=emulator npx codeceptjs run 'tests/*_test.ts' --grep @smoke --verbose || {
+              echo "=== Test Execution Failed ==="
+              echo "=== Appium Log ==="
+              cat appium.log
+              exit 1
+            }
 
       - name: Upload test results
         if: always()
@@ -143,13 +182,52 @@ jobs:
           api-level: 33
           arch: x86_64
           profile: 'Pixel 6'
+          target: google_apis
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
           script: |
-            # Start Appium server with relaxed security for network tests
-            appium --base-path /wd/hub --port 4723 --relaxed-security &
-            # Wait for Appium to be ready
-            timeout 30 bash -c 'until curl -s http://localhost:4723/wd/hub/status > /dev/null; do sleep 1; done' || echo "Appium may not be fully ready"
-            # Run tests with framework's auto-device management disabled (Appium already started)
-            AUTO_APPIUM=false PLATFORM=android DEVICE_TYPE=emulator npx codeceptjs run 'tests/*_test.ts' --grep @regression
+            echo "=== Emulator Boot Complete ==="
+            adb devices
+            echo ""
+            
+            echo "=== Waiting for Emulator to be Fully Ready ==="
+            adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done; input keyevent 82'
+            sleep 5
+            echo "Emulator is fully booted and ready"
+            echo ""
+            
+            echo "=== Verifying App Installation ==="
+            ls -la apps/android/mda-2.0.1-22.apk
+            echo ""
+            
+            echo "=== Starting Appium Server ==="
+            appium --base-path /wd/hub --port 4723 --relaxed-security > appium.log 2>&1 &
+            APPIUM_PID=$!
+            echo "Appium PID: $APPIUM_PID"
+            echo ""
+            
+            echo "=== Waiting for Appium to be Ready ==="
+            for i in {1..30}; do
+              if curl -s http://localhost:4723/wd/hub/status > /dev/null 2>&1; then
+                echo "Appium is ready!"
+                break
+              fi
+              echo "Waiting for Appium... attempt $i/30"
+              sleep 2
+            done
+            echo ""
+            
+            echo "=== Appium Status Check ==="
+            curl -s http://localhost:4723/wd/hub/status | jq '.' || echo "Failed to get Appium status"
+            echo ""
+            
+            echo "=== Running Regression Tests ==="
+            AUTO_APPIUM=false PLATFORM=android DEVICE_TYPE=emulator npx codeceptjs run 'tests/*_test.ts' --grep @regression --verbose || {
+              echo "=== Test Execution Failed ==="
+              echo "=== Appium Log ==="
+              cat appium.log
+              exit 1
+            }
 
       - name: Upload test results
         if: always()
@@ -297,13 +375,52 @@ jobs:
           api-level: 33
           arch: x86_64
           profile: 'Pixel 6'
+          target: google_apis
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
           script: |
-            # Start Appium server with relaxed security for network tests
-            appium --base-path /wd/hub --port 4723 --relaxed-security &
-            # Wait for Appium to be ready
-            timeout 30 bash -c 'until curl -s http://localhost:4723/wd/hub/status > /dev/null; do sleep 1; done' || echo "Appium may not be fully ready"
-            # Run all tests with framework's auto-device management disabled (Appium already started)
-            AUTO_APPIUM=false PLATFORM=android DEVICE_TYPE=emulator npx codeceptjs run 'tests/*_test.ts'
+            echo "=== Emulator Boot Complete ==="
+            adb devices
+            echo ""
+            
+            echo "=== Waiting for Emulator to be Fully Ready ==="
+            adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done; input keyevent 82'
+            sleep 5
+            echo "Emulator is fully booted and ready"
+            echo ""
+            
+            echo "=== Verifying App Installation ==="
+            ls -la apps/android/mda-2.0.1-22.apk
+            echo ""
+            
+            echo "=== Starting Appium Server ==="
+            appium --base-path /wd/hub --port 4723 --relaxed-security > appium.log 2>&1 &
+            APPIUM_PID=$!
+            echo "Appium PID: $APPIUM_PID"
+            echo ""
+            
+            echo "=== Waiting for Appium to be Ready ==="
+            for i in {1..30}; do
+              if curl -s http://localhost:4723/wd/hub/status > /dev/null 2>&1; then
+                echo "Appium is ready!"
+                break
+              fi
+              echo "Waiting for Appium... attempt $i/30"
+              sleep 2
+            done
+            echo ""
+            
+            echo "=== Appium Status Check ==="
+            curl -s http://localhost:4723/wd/hub/status | jq '.' || echo "Failed to get Appium status"
+            echo ""
+            
+            echo "=== Running Full Test Suite ==="
+            AUTO_APPIUM=false PLATFORM=android DEVICE_TYPE=emulator npx codeceptjs run 'tests/*_test.ts' --verbose || {
+              echo "=== Test Execution Failed ==="
+              echo "=== Appium Log ==="
+              cat appium.log
+              exit 1
+            }
 
       - name: Upload nightly results
         if: always()

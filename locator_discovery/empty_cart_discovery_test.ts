@@ -38,12 +38,12 @@ Scenario('Discover elements visible in empty cart', async ({ I }) => {
     try {
       const elements = await I.grabNumberOfVisibleElements(item.locator);
       if (elements > 0) {
-        console.log(`✅ [OK] ${item.name}: Found ${elements} element(s)`);
+        console.log(`[OK] ${item.name}: Found ${elements} element(s)`);
       } else {
-        console.log(`❌ [NOT FOUND] ${item.name}`);
+        console.log(`[NOT FOUND] ${item.name}`);
       }
     } catch (e) {
-      console.log(`❌ [ERROR] ${item.name}: ${e.message}`);
+      console.log(`[ERROR] ${item.name}: ${e.message}`);
     }
   }
   
@@ -68,12 +68,12 @@ Scenario('Discover elements visible in empty cart', async ({ I }) => {
   try {
     const goShoppingExists = await I.grabNumberOfVisibleElements('//android.widget.Button[@text="Go Shopping"]');
     if (goShoppingExists > 0) {
-      console.log('✅ Empty cart detected via "Go Shopping" button');
+      console.log('Empty cart detected via "Go Shopping" button');
     } else {
-      console.log('❌ "Go Shopping" button not found - cart might not be empty OR different empty state');
+      console.log('"Go Shopping" button not found - cart might not be empty OR different empty state');
     }
   } catch (e) {
-    console.log(`❌ Could not check empty cart state: ${e.message}`);
+    console.log(`Could not check empty cart state: ${e.message}`);
   }
   
   console.log('===================================================\n');

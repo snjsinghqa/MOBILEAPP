@@ -37,17 +37,17 @@ Scenario('Discover state after returning from product details', async ({ I }) =>
   // Check if menu icon is visible (used by waitForPageLoad)
   try {
     const menuIcon = await I.grabNumberOfVisibleElements('~Menu Icon');
-    console.log(`Menu Icon: ${menuIcon > 0 ? '✅ VISIBLE' : '❌ NOT VISIBLE'} (count: ${menuIcon})`);
+    console.log(`Menu Icon: ${menuIcon > 0 ? 'VISIBLE' : 'NOT VISIBLE'} (count: ${menuIcon})`);
   } catch (e) {
-    console.log(`Menu Icon: ❌ ERROR - ${e.message}`);
+    console.log(`Menu Icon: ERROR - ${e.message}`);
   }
   
   // Check if product images are visible
   try {
     const productImages = await I.grabNumberOfVisibleElements('~Product Image');
-    console.log(`Product Images: ${productImages > 0 ? '✅ VISIBLE' : '❌ NOT VISIBLE'} (count: ${productImages})`);
+    console.log(`Product Images: ${productImages > 0 ? 'VISIBLE' : 'NOT VISIBLE'} (count: ${productImages})`);
   } catch (e) {
-    console.log(`Product Images: ❌ ERROR - ${e.message}`);
+    console.log(`Product Images: ERROR - ${e.message}`);
   }
   
   // Check if we're on products page or somewhere else

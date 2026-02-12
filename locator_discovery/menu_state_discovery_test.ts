@@ -37,12 +37,12 @@ Scenario('Discover menu state and available items', async ({ I }) => {
     try {
       const elements = await I.grabNumberOfVisibleElements(item.locator);
       if (elements > 0) {
-        console.log(`✅ [OK] ${item.name}: Found ${elements} element(s)`);
+        console.log(`[OK] ${item.name}: Found ${elements} element(s)`);
       } else {
-        console.log(`❌ [NOT FOUND] ${item.name}`);
+        console.log(`[NOT FOUND] ${item.name}`);
       }
     } catch (e) {
-      console.log(`❌ [ERROR] ${item.name}: ${e.message}`);
+      console.log(`[ERROR] ${item.name}: ${e.message}`);
     }
   }
   

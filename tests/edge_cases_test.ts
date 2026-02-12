@@ -135,7 +135,7 @@ Scenario('Cart persists after app goes to background and returns', async ({ I })
   I.assertEquals(initialCartCount, 1, 'Cart should have 1 item before background');
   
   // Send app to background and return - platform specific behavior
-  // Note: Background/foreground testing requires specific platform handling
+  // Background/foreground testing requires specific platform handling
   // For Android: Use adb shell input keyevent KEYCODE_HOME
   // For iOS: Use mobile: pressButton with home
   const platform = process.env.PLATFORM?.toLowerCase() || 'android';

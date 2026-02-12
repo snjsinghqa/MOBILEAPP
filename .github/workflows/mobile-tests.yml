@@ -295,8 +295,6 @@ jobs:
       - name: Download Sauce Labs Demo App (iOS)
         run: |
           mkdir -p apps/ios
-          # Note: iOS app needs to be downloaded from Sauce Labs iOS repo releases
-          # or built from source. This is a placeholder URL.
           echo "iOS app would be downloaded here from Sauce Labs releases"
 
       - name: List available simulators

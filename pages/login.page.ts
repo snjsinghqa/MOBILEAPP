@@ -19,8 +19,6 @@ const { I } = inject();
 class LoginPage extends BasePage {
   
   // Locators - Native Android app uses resource-id, iOS uses accessibility id
-  // Note: Helper methods from BasePage (like androidResourceId, accessibilityId) can be used 
-  // for dynamic locators in methods, but static locators use raw strings for compatibility
   private locators = {
     // Username/Email field
     usernameField: {

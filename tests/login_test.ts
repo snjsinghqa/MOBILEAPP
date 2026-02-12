@@ -164,7 +164,7 @@ Scenario('SECURITY: App should NOT allow login with non-existent user', async ({
 /**
  * @author Sanjay Singh Panwar
  * Validation Tests - Empty Field Errors
- * Note: The Sauce Labs Demo App only validates client-side (empty fields)
+ * The Sauce Labs Demo App only validates client-side (empty fields)
  */
 Scenario('Login with empty username shows validation error', async ({ I }) => {
   // Navigate to login

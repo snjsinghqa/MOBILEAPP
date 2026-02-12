@@ -82,7 +82,7 @@ jobs:
         with:
           api-level: 33
           arch: x86_64
-          profile: 'Pixel 6'
+          profile: pixel_6
           target: google_apis
           force-avd-creation: false
           emulator-boot-timeout: 600
@@ -196,7 +196,7 @@ jobs:
         with:
           api-level: 33
           arch: x86_64
-          profile: 'Pixel 6'
+          profile: pixel_6
           target: google_apis
           force-avd-creation: false
           emulator-boot-timeout: 600
@@ -404,7 +404,7 @@ jobs:
         with:
           api-level: 33
           arch: x86_64
-          profile: 'Pixel 6'
+          profile: pixel_6
           target: google_apis
           force-avd-creation: false
           emulator-boot-timeout: 600

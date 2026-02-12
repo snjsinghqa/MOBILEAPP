@@ -57,6 +57,7 @@
     "concurrently": "^9.2.1",
     "cross-env": "^7.0.3",
     "eslint": "^9.39.2",
+    "globals": "^17.3.0",
     "mochawesome": "^7.1.4",
     "mochawesome-merge": "^4.4.1",
     "mochawesome-report-generator": "^6.3.2",

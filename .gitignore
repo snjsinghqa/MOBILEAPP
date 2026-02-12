@@ -22,6 +22,7 @@ Thumbs.db
 
 # Compiled files
 *.js
+!eslint.config.js
 *.js.map
 *.d.ts
 !codecept.conf.ts

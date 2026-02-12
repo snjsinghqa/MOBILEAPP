@@ -5,6 +5,8 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main]
+  schedule:
+    - cron: '0 2 * * *'  # Run nightly at 2 AM UTC
   workflow_dispatch:
     inputs:
       test_type:
@@ -82,9 +84,12 @@ jobs:
           arch: x86_64
           profile: 'Pixel 6'
           script: |
-            appium --base-path /wd/hub &
-            sleep 10
-            npm run test:android:emulator -- --grep @smoke
+            # Start Appium server with relaxed security for network tests
+            appium --base-path /wd/hub --port 4723 --relaxed-security &
+            # Wait for Appium to be ready
+            timeout 30 bash -c 'until curl -s http://localhost:4723/wd/hub/status > /dev/null; do sleep 1; done' || echo "Appium may not be fully ready"
+            # Run tests with framework's auto-device management disabled (Appium already started)
+            AUTO_APPIUM=false PLATFORM=android DEVICE_TYPE=emulator npx codeceptjs run 'tests/*_test.ts' --grep @smoke
 
       - name: Upload test results
         if: always()
@@ -139,9 +144,12 @@ jobs:
           arch: x86_64
           profile: 'Pixel 6'
           script: |
-            appium --base-path /wd/hub &
-            sleep 10
-            npm run test:android:emulator -- --grep @regression
+            # Start Appium server with relaxed security for network tests
+            appium --base-path /wd/hub --port 4723 --relaxed-security &
+            # Wait for Appium to be ready
+            timeout 30 bash -c 'until curl -s http://localhost:4723/wd/hub/status > /dev/null; do sleep 1; done' || echo "Appium may not be fully ready"
+            # Run tests with framework's auto-device management disabled (Appium already started)
+            AUTO_APPIUM=false PLATFORM=android DEVICE_TYPE=emulator npx codeceptjs run 'tests/*_test.ts' --grep @regression
 
       - name: Upload test results
         if: always()
@@ -290,9 +298,12 @@ jobs:
           arch: x86_64
           profile: 'Pixel 6'
           script: |
-            appium --base-path /wd/hub &
-            sleep 10
-            npm run test:android:emulator
+            # Start Appium server with relaxed security for network tests
+            appium --base-path /wd/hub --port 4723 --relaxed-security &
+            # Wait for Appium to be ready
+            timeout 30 bash -c 'until curl -s http://localhost:4723/wd/hub/status > /dev/null; do sleep 1; done' || echo "Appium may not be fully ready"
+            # Run all tests with framework's auto-device management disabled (Appium already started)
+            AUTO_APPIUM=false PLATFORM=android DEVICE_TYPE=emulator npx codeceptjs run 'tests/*_test.ts'
 
       - name: Upload nightly results
         if: always()

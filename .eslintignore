@@ -1,0 +1,7 @@
+node_modules/
+output/
+allure-results/
+allure-report/
+apps/
+*.js
+*.d.ts

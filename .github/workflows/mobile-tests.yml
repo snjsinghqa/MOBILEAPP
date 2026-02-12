@@ -84,8 +84,12 @@ jobs:
           arch: x86_64
           profile: 'Pixel 6'
           target: google_apis
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          force-avd-creation: false
+          emulator-boot-timeout: 600
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory 4096 -partition-size 2048
           disable-animations: true
+          disable-spellchecker: true
+          disable-linux-hw-accel: auto
           script: |
             echo "=== Emulator Boot Complete ==="
             adb devices
@@ -127,8 +131,19 @@ jobs:
               echo "=== Test Execution Failed ==="
               echo "=== Appium Log ==="
               cat appium.log
-              exit 1
+              TEST_EXIT_CODE=$?
+              echo "Test exit code: $TEST_EXIT_CODE"
             }
+            
+            echo ""
+            echo "=== Checking Emulator Status ==="
+            adb devices || echo "ADB connection lost"
+            
+            echo "=== Graceful Cleanup ==="
+            kill $APPIUM_PID 2>/dev/null || echo "Appium already stopped"
+            
+            # Exit with test result code if tests failed, otherwise 0
+            exit ${TEST_EXIT_CODE:-0}
 
       - name: Upload test results
         if: always()
@@ -183,8 +198,12 @@ jobs:
           arch: x86_64
           profile: 'Pixel 6'
           target: google_apis
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          force-avd-creation: false
+          emulator-boot-timeout: 600
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory 4096 -partition-size 2048
           disable-animations: true
+          disable-spellchecker: true
+          disable-linux-hw-accel: auto
           script: |
             echo "=== Emulator Boot Complete ==="
             adb devices
@@ -226,8 +245,19 @@ jobs:
               echo "=== Test Execution Failed ==="
               echo "=== Appium Log ==="
               cat appium.log
-              exit 1
+              TEST_EXIT_CODE=$?
+              echo "Test exit code: $TEST_EXIT_CODE"
             }
+            
+            echo ""
+            echo "=== Checking Emulator Status ==="
+            adb devices || echo "ADB connection lost"
+            
+            echo "=== Graceful Cleanup ==="
+            kill $APPIUM_PID 2>/dev/null || echo "Appium already stopped"
+            
+            # Exit with test result code if tests failed, otherwise 0
+            exit ${TEST_EXIT_CODE:-0}
 
       - name: Upload test results
         if: always()
@@ -376,8 +406,12 @@ jobs:
           arch: x86_64
           profile: 'Pixel 6'
           target: google_apis
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          force-avd-creation: false
+          emulator-boot-timeout: 600
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory 4096 -partition-size 2048
           disable-animations: true
+          disable-spellchecker: true
+          disable-linux-hw-accel: auto
           script: |
             echo "=== Emulator Boot Complete ==="
             adb devices
@@ -419,8 +453,19 @@ jobs:
               echo "=== Test Execution Failed ==="
               echo "=== Appium Log ==="
               cat appium.log
-              exit 1
+              TEST_EXIT_CODE=$?
+              echo "Test exit code: $TEST_EXIT_CODE"
             }
+            
+            echo ""
+            echo "=== Checking Emulator Status ==="
+            adb devices || echo "ADB connection lost"
+            
+            echo "=== Graceful Cleanup ==="
+            kill $APPIUM_PID 2>/dev/null || echo "Appium already stopped"
+            
+            # Exit with test result code if tests failed, otherwise 0
+            exit ${TEST_EXIT_CODE:-0}
 
       - name: Upload nightly results
         if: always()

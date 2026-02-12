@@ -62,7 +62,7 @@ export const appiumConfig: AppiumConfig = {
   get port(): number {
     return getAppiumPort();
   },
-  path: process.env.APPIUM_PATH || '/wd/hub',
+  path: process.env.APPIUM_PATH || '/',
 };
 
 // Android Emulator Configuration

@@ -215,21 +215,25 @@ class CheckoutPage extends BasePage {
     zipCode: string;
     country: string;
   }) {
-    // Full name
+    // Wait for form to be ready
+    await this.pause(1);
+    
+    // Full name - use setFieldValue to avoid keyboard issues
     const fullNameField = this.getLocator(
       this.locators.fullNameField.android,
       this.locators.fullNameField.ios
     );
-    await this.tap(fullNameField);
-    await this.fillField(fullNameField, address.fullName);
+    await this.waitForElement(fullNameField, 10);
+    await this.setFieldValue(fullNameField, address.fullName);
+    await this.pause(0.3);
     
     // Address line 1
     const addressLine1Field = this.getLocator(
       this.locators.addressLine1Field.android,
       this.locators.addressLine1Field.ios
     );
-    await this.tap(addressLine1Field);
-    await this.fillField(addressLine1Field, address.addressLine1);
+    await this.setFieldValue(addressLine1Field, address.addressLine1);
+    await this.pause(0.3);
     
     // Address line 2 (optional)
     if (address.addressLine2) {
@@ -237,8 +241,8 @@ class CheckoutPage extends BasePage {
         this.locators.addressLine2Field.android,
         this.locators.addressLine2Field.ios
       );
-      await this.tap(addressLine2Field);
-      await this.fillField(addressLine2Field, address.addressLine2);
+      await this.setFieldValue(addressLine2Field, address.addressLine2);
+      await this.pause(0.3);
     }
     
     // City
@@ -246,8 +250,8 @@ class CheckoutPage extends BasePage {
       this.locators.cityField.android,
       this.locators.cityField.ios
     );
-    await this.tap(cityField);
-    await this.fillField(cityField, address.city);
+    await this.setFieldValue(cityField, address.city);
+    await this.pause(0.3);
     
     // State (optional)
     if (address.state) {
@@ -255,8 +259,8 @@ class CheckoutPage extends BasePage {
         this.locators.stateField.android,
         this.locators.stateField.ios
       );
-      await this.tap(stateField);
-      await this.fillField(stateField, address.state);
+      await this.setFieldValue(stateField, address.state);
+      await this.pause(0.3);
     }
     
     // Zip code
@@ -264,16 +268,18 @@ class CheckoutPage extends BasePage {
       this.locators.zipCodeField.android,
       this.locators.zipCodeField.ios
     );
-    await this.tap(zipCodeField);
-    await this.fillField(zipCodeField, address.zipCode);
+    await this.waitForElement(zipCodeField, 10);
+    await this.setFieldValue(zipCodeField, address.zipCode);
+    await this.pause(0.3);
     
     // Country
     const countryField = this.getLocator(
       this.locators.countryField.android,
       this.locators.countryField.ios
     );
-    await this.tap(countryField);
-    await this.fillField(countryField, address.country);
+    await this.waitForElement(countryField, 10);
+    await this.setFieldValue(countryField, address.country);
+    await this.pause(0.5);
   }
 
   /**
@@ -288,41 +294,33 @@ class CheckoutPage extends BasePage {
     // Wait for payment page to load
     await this.pause(2);
     
-    // Card number - fill first as it's usually at the top
+    // Card number - use setFieldValue to avoid keyboard issues
     const cardNumberField = this.getLocator(
       this.locators.cardNumberField.android,
       this.locators.cardNumberField.ios
     );
     await this.waitForElement(cardNumberField, 10);
-    await this.tap(cardNumberField);
-    await this.fillField(cardNumberField, payment.cardNumber);
+    await this.setFieldValue(cardNumberField, payment.cardNumber);
     console.log(`Filled Card Number: ${payment.cardNumber}`);
+    await this.pause(0.3);
     
     // Expiration date
     const expirationField = this.getLocator(
       this.locators.expirationDateField.android,
       this.locators.expirationDateField.ios
     );
-    await this.tap(expirationField);
-    await this.fillField(expirationField, payment.expirationDate);
+    await this.setFieldValue(expirationField, payment.expirationDate);
     console.log(`Filled Expiration Date: ${payment.expirationDate}`);
+    await this.pause(0.3);
     
     // Security code
     const securityCodeField = this.getLocator(
       this.locators.securityCodeField.android,
       this.locators.securityCodeField.ios
     );
-    await this.tap(securityCodeField);
-    await this.fillField(securityCodeField, payment.securityCode);
+    await this.setFieldValue(securityCodeField, payment.securityCode);
     console.log(`Filled Security Code: ${payment.securityCode}`);
-    
-    // Hide keyboard before checking for optional fields
-    try {
-      await this.I.hideDeviceKeyboard();
-      await this.pause(1);
-    } catch {
-      console.log('Keyboard hide not needed');
-    }
+    await this.pause(0.5);
     
     // Full Name / Cardholder Name field (optional - may not be present)
     if (payment.cardHolderName) {
@@ -335,8 +333,7 @@ class CheckoutPage extends BasePage {
         // Check if field exists without waiting
         const exists = await this.elementExists(cardHolderField);
         if (exists) {
-          await this.tap(cardHolderField);
-          await this.fillField(cardHolderField, payment.cardHolderName);
+          await this.setFieldValue(cardHolderField, payment.cardHolderName);
           console.log(`[OK] Filled Cardholder Name: ${payment.cardHolderName}`);
           
           // Hide keyboard after filling
